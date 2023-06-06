@@ -23,7 +23,8 @@ function set(uid: string, formik: FormikContextType<any>) {
   notifySubscribers(uid, formik);
 }
 
-function getRef(uid: string) {
+function getOrCreateRef(uid: string) {
+  MAP[uid] = MAP[uid] ?? React.createRef<FormikContextType<any>>();
   return MAP[uid];
 }
 
@@ -48,7 +49,7 @@ function subscribe<TValue>(uid: string, name: string, callback: (value: TValue) 
 
 export const FormMap = {
   set,
-  getRef,
+  getRef: getOrCreateRef,
   subscribe,
   destroy,
 };

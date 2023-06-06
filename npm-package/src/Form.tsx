@@ -20,6 +20,7 @@ import { useFormLabel } from './useFormLabel';
 import { useFormFieldDisabled } from './useFormFieldDisabled';
 import { useFormItemName } from './useFormItemName';
 import { Settings, FormSettings } from './FormSettings';
+import { useFormValidate } from './useFormValidate';
 
 const BUILT_IN = {
   Item: FormItem,
@@ -43,6 +44,7 @@ const BUILT_IN = {
   useLabel: useFormLabel,
   useDisabled: useFormFieldDisabled,
   useName: useFormItemName,
+  useValidate: useFormValidate,
 };
 
 export interface FormExtensions {}

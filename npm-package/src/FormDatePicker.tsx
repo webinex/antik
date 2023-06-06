@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 import { DatePicker, DatePickerProps } from 'antd';
 import { FC, memo, useMemo } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import moment, { Moment } from 'moment';
 import { useFieldBlur, useFieldChange } from './utils';
 import { useFormFieldDisabled } from './useFormFieldDisabled';
 import { useFormItemName } from './useFormItemName';
@@ -22,11 +22,11 @@ export const FormDatePicker: FC<FormDatePickerProps> = (props) => {
   const [{ value: formikValue = null }] = useField(name);
 
   const disabled = useFormFieldDisabled(props);
-  const onChange = useFieldChange<Dayjs | null, Dayjs | null, string>(name);
+  const onChange = useFieldChange<Moment | null, Moment | null, string>(name);
   const onBlur = useFieldBlur(name);
 
   const value = useMemo(() => {
-    return typeof formikValue === 'string' ? dayjs(formikValue) : formikValue;
+    return typeof formikValue === 'string' ? moment(formikValue) : formikValue;
   }, [formikValue]);
 
   return (

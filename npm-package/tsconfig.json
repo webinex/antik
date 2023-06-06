@@ -23,8 +23,8 @@
     "emitDeclarationOnly": true,
     "baseUrl": "./",
     "paths": {
-      "@webinex/antik": ["src"],
-      "@webinex/antik/*": ["src/*"]
+      "@webinex/antik-v4": ["src"],
+      "@webinex/antik-v4/*": ["src/*"]
     }
   }
 }

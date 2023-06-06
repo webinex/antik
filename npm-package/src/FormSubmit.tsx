@@ -11,7 +11,7 @@ export interface FormSubmitProps extends ButtonProps {
 
 const useHandleClick = (
   { onSubmitted, onClick }: FormSubmitProps,
-  formik: { current: FormikContextType<any> | undefined },
+  formik: { current: FormikContextType<any> | undefined | null },
 ) => {
   return useCallback(
     async (e: React.MouseEvent<HTMLButtonElement & HTMLAnchorElement>) => {

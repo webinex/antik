@@ -1,5 +1,5 @@
 {
-  "name": "@webinex/antik-#{name}",
+  "name": "@webinex/antik-v4-#{name}",
   "version": "1.0.0",
   "description": "",
   "main": "../../dist/cjs/add/#{name}/index.js",

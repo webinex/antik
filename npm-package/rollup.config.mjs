@@ -60,7 +60,7 @@ function getAddConfig(add) {
   return [
     {
       input: `src/add/${add}/index.ts`,
-      external: ['@webinex/antik'],
+      external: ['@webinex/antik-v4'],
       output: [
         {
           file: path.dirname(packageJson.module) + '/add/' + add + '/' + path.basename(packageJson.module),
@@ -86,7 +86,7 @@ function getAddConfig(add) {
           tsconfig: './tsconfig.json',
           include: ['src/add/' + add + '/**'],
           paths: {
-            '@webinex/antik': ['dist'],
+            '@webinex/antik-v4': ['dist'],
           },
         }),
         postcss(),

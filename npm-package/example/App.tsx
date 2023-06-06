@@ -6,6 +6,7 @@ import type { DefaultOptionType } from 'antd/es/select';
 import type { CheckboxOptionType } from 'antd';
 import { useUsersOptionSource } from './useUserOptionSource';
 import { useTranslation } from './useTranslation';
+import 'antd/dist/antd.css';
 
 Form.settings.useTranslation = useTranslation;
 
