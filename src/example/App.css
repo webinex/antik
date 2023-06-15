@@ -1,0 +1,22 @@
+.ant-form-item.--checkbox .ant-form-item-row {
+  display: inline-block;
+  direction: rtl;
+}
+
+.ant-form-item.--checkbox .ant-form-item-row .ant-form-item-label {
+  display: inline-block;
+  width: auto;
+  direction: ltr;
+  padding-left: 6px;
+  padding-bottom: 0;
+  user-select: none;
+}
+
+.ant-form-item.--checkbox .ant-form-item-row .ant-form-item-label * {
+  cursor: pointer;
+}
+
+.ant-form-item.--checkbox .ant-form-item-row .ant-form-item-control {
+  display: inline-block;
+  width: auto;
+}
