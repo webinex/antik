@@ -120,16 +120,23 @@ function useQueryOptions<OptionType extends Option>(
   const fetch = useLazyQueryOptions(args, reducer);
   const isFirstRenderRef = useRef(true);
 
-  useEffect(() => {
-    const shouldFetch = !isFirstRenderRef.current || preload;
-    isFirstRenderRef.current = false;
+  useEffect(
+    () => {
+      if (!preload) return;
 
-    if (!shouldFetch) {
+      fetch(undefined);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  useEffect(() => {
+    if (isFirstRenderRef.current) {
+      isFirstRenderRef.current = false;
       return;
     }
 
     fetch(searchValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetch, searchValue, preload]);
 }
 
