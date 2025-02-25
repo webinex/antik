@@ -2,8 +2,9 @@ import { Form as AntdForm } from 'antd';
 import type { FormProps as AntdFormProps } from 'antd';
 import type { FormProps as RcFormProps } from 'rc-field-form/lib/Form';
 import { FormFormik, FormFormikProps } from './FormFormik';
-import { FormikValues } from 'formik';
+import { FormikHelpers, FormikValues } from 'formik';
 import { fc } from './fc';
+import { useCallback } from 'react';
 
 export type FormBaseProps = Omit<AntdFormProps, keyof RcFormProps | 'disabled'>;
 
@@ -89,14 +90,28 @@ export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<
 
   const [formikProps, formProps, children] = splitProps(props);
 
+  const { onSubmit, validationSchema } = formikProps;
+
+  const handleSubmit = useCallback(
+    (values: TValue, formikHelpers: FormikHelpers<TValue>) => {
+      const formattedValues =
+        validationSchema && typeof validationSchema.validateSync === 'function'
+          ? validationSchema.validateSync(values)
+          : values;
+
+      onSubmit?.(formattedValues, formikHelpers);
+    },
+    [validationSchema, onSubmit],
+  );
+
   if (typeof children === 'function') {
-    <FormFormik<TValue> {...formikProps}>
+    <FormFormik<TValue> {...formikProps} onSubmit={handleSubmit}>
       {(formik) => <AntdForm {...formProps}>{children(formik)}</AntdForm>}
     </FormFormik>;
   }
 
   return (
-    <FormFormik<TValue> {...formikProps}>
+    <FormFormik<TValue> {...formikProps} onSubmit={handleSubmit}>
       <AntdForm {...formProps}>{children as JSX.Element}</AntdForm>
     </FormFormik>
   );
