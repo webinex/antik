@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+    name: Build and Publish (version branch only)
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +37,7 @@ jobs:
         if: github.ref == 'refs/heads/v5'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          PACKAGE_VERSION=$(node -p "require('./src/package.json').version")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
           if npm view your-package-name@$PACKAGE_VERSION > /dev/null 2>&1; then
             echo "Version $PACKAGE_VERSION already exists."
             exit 0
