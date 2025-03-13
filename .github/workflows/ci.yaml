@@ -44,5 +44,12 @@ jobs:
             exit 0
           fi
           npm whoami || (echo "❌ NPM_TOKEN invalid!" && exit 1)
-          npm publish --access public
+
+          if [[ "$PACKAGE_VERSION" == *-* ]]; then
+            echo "Publishing $PACKAGE_NAME@$PACKAGE_VERSION with tag 'next'"
+            npm publish --tag next --access public
+          else
+            echo "Publishing $PACKAGE_NAME@$PACKAGE_VERSION with tag 'latest'"
+            npm publish --access public
+          fi
         working-directory: ./src
