@@ -2,7 +2,7 @@
   "name": "@webinex/antik",
   "description": "Webinex Wispo",
   "private": false,
-  "version": "1.0.0-build18",
+  "version": "1.0.0",
   "author": "Webinex Dev",
   "license": "Apache-2.0",
   "main": "dist/cjs/index.js",
@@ -15,7 +15,7 @@
     "add"
   ],
   "scripts": {
-    "build": "rimraf dist && rimraf add && rollup -c --environment ENV:production --failAfterWarnings",
+    "build": "tsc --project tsconfig.type.json && rimraf dist && rimraf add && rollup -c --environment ENV:production --failAfterWarnings",
     "start": "rollup -c -w",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "prettier:write": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
@@ -50,8 +50,7 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.5.0",
-    "typescript": "^5.0.4",
-    "yup": "^1.2.0"
+    "typescript": "^5.0.4"
   },
   "peerDependencies": {
     "antd": ">=5",
