@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - v5
+  pull_request:
+    branches:
+      - v5
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org/'
+          cache-dependency-path: ./src/yarn.lock
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: ./src
+
+      - name: Build Project
+        run: yarn build
+        working-directory: ./src
+
+      - name: Publish NPM Package
+        if: github.ref == 'refs/heads/v5'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          PACKAGE_VERSION=$(node -p "require('./src/package.json').version")
+          if npm view your-package-name@$PACKAGE_VERSION > /dev/null 2>&1; then
+            echo "Version $PACKAGE_VERSION already exists."
+            exit 0
+          fi
+          npm publish --access public
+        working-directory: ./src

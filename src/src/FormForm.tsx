@@ -83,6 +83,10 @@ function splitProps<TValue>(
   return [formikProps, formProps, props.children] as any;
 }
 
+function isYupSchema(x: any): x is { validate: (value: any) => Promise<any> } {
+  return x && typeof x === 'object' && x.__isYupSchema__ === true;
+}
+
 export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<TValue>) => {
   if (!isFormWithFormikProps(props)) {
     return <AntdForm {...props} />;
@@ -93,13 +97,15 @@ export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<
   const { onSubmit, validationSchema } = formikProps;
 
   const handleSubmit = useCallback(
-    (values: TValue, formikHelpers: FormikHelpers<TValue>) => {
-      const formattedValues =
-        validationSchema && typeof validationSchema.validateSync === 'function'
-          ? validationSchema.validateSync(values)
+    async (values: TValue, formikHelpers: FormikHelpers<TValue>) => {
+      try {
+        const formattedValues = isYupSchema(validationSchema)
+          ? await validationSchema.validate(values)
           : values;
-
-      onSubmit?.(formattedValues, formikHelpers);
+        await Promise.resolve(onSubmit?.(formattedValues, formikHelpers));
+      } finally {
+        formikHelpers.setSubmitting(false);
+      }
     },
     [validationSchema, onSubmit],
   );
