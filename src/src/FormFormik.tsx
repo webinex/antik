@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Formik, FormikConfig, FormikContextType, FormikValues, useFormikContext } from 'formik';
 import { FormNamespaceContext } from './FormNamespace';
 import { FormMap } from './FormMap';
+import { FormItemContext } from './FormItemContext';
 
 interface Extension<T> {
   uid: string;
@@ -39,9 +40,11 @@ export function FormFormik<T extends FormikValues>(props: FormFormikProps<T>) {
 
   return (
     <FormNamespaceContext.Provider value={ns}>
-      <Formik<T> {...formikProps}>
-        <Render uid={uid} children={children} />
-      </Formik>
+      <FormItemContext.Provider value={undefined}>
+        <Formik<T> {...formikProps}>
+          <Render uid={uid} children={children} />
+        </Formik>
+      </FormItemContext.Provider>
     </FormNamespaceContext.Provider>
   );
 }

@@ -1,7 +1,6 @@
 import { useField } from 'formik';
 import { Radio, RadioGroupProps } from 'antd';
 import { FC, memo } from 'react';
-import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { useFormFieldDisabled } from './useFormFieldDisabled';
 import { useFormItemName } from './useFormItemName';
 import { useFormFieldOnChange } from './useFormFieldOnChange';
@@ -24,7 +23,7 @@ export const FormRadioGroup: FC<FormRadioGroupProps> = (props: FormRadioGroupPro
   } = props;
 
   const name = useFormItemName(nameProp);
-  const field = useField<CheckboxValueType>(name);
+  const field = useField<any>(name);
   const onChange = useFormFieldOnChange(name, mapSet);
   const disabled = useFormFieldDisabled(props);
 

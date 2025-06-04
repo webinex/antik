@@ -1,10 +1,10 @@
 import { useField } from 'formik';
 import { Checkbox } from 'antd';
 import { FC, memo } from 'react';
-import type { CheckboxGroupProps, CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { useFormFieldOnChange } from './useFormFieldOnChange';
 import { useFormFieldDisabled } from './useFormFieldDisabled';
 import { useFormItemName } from './useFormItemName';
+import type { CheckboxGroupProps } from 'antd/es/checkbox';
 
 export type FormCheckboxGroupProps = CheckboxGroupProps & {
   mapSet?: (...args: Parameters<NonNullable<CheckboxGroupProps['onChange']>>) => any;
@@ -26,7 +26,7 @@ export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = (props) => {
   } = props;
 
   const name = useFormItemName(nameProp);
-  const field = useField<CheckboxValueType[]>(name);
+  const field = useField<any[]>(name);
 
   const disabled = useFormFieldDisabled(props);
   const onChange = useFormFieldOnChange(name, mapSet);

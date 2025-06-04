@@ -38,7 +38,7 @@ function useMapValue<ValueType, OptionType extends BaseOptionType>(
   valueType: FormSelectProps['valueType'] = 'value',
 ) {
   return useCallback(
-    (value: ValueType, option: OptionType | OptionType[]) => {
+    (value: ValueType, option: OptionType | OptionType[] | undefined) => {
       if (valueType === 'value') {
         return value ?? null;
       }
