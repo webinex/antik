@@ -20,3 +20,23 @@
   display: inline-block;
   width: auto;
 }
+
+pre {
+  margin: 0;
+  padding: 1rem;
+  background-color: #eee;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+body {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+#app {
+  padding-block: 2rem;
+  max-width: 800px;
+  width: 100%;
+}

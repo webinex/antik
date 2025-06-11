@@ -14,6 +14,38 @@ function isKeyError(x: any): x is { key: string } {
   return typeof x === 'object' && x.hasOwnProperty('key') && x['key'] != null;
 }
 
+function countOfKeysOfObject(obj: Record<string, any>): number {
+  let count = 0;
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      count += countOfKeysOfArray(value);
+    } else if (typeof value === 'object' && value !== null) {
+      count += countOfKeysOfObject(value);
+    } else {
+      count++;
+    }
+  });
+
+  return count;
+}
+
+function countOfKeysOfArray(arr: any[]): number {
+  let count = 0;
+
+  arr.forEach((item) => {
+    if (Array.isArray(item)) {
+      count += countOfKeysOfArray(item);
+    } else if (typeof item === 'object' && item !== null) {
+      count += countOfKeysOfObject(item);
+    } else {
+      count++;
+    }
+  });
+
+  return count;
+}
+
 function useError(args: UseFormErrorMessageArgs) {
   const { name, label } = args;
   const [, { error }] = useField(name);
@@ -27,6 +59,17 @@ function useError(args: UseFormErrorMessageArgs) {
     if (isKeyError(error)) {
       const keyed = error as { key: string };
       return t(`errors.${keyed.key}`, { ...keyed, label });
+    }
+
+    if (Array.isArray(error)) {
+      return t(`errors.inner`, { count: countOfKeysOfArray(error), label, error });
+    }
+
+    if (typeof error === 'object' && error !== null) {
+      const count = countOfKeysOfObject(error);
+      if (count > 0) {
+        return t(`errors.inner`, { count, label, error });
+      }
     }
 
     return String(error).toString();

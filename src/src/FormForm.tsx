@@ -111,9 +111,11 @@ export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<
   );
 
   if (typeof children === 'function') {
-    <FormFormik<TValue> {...formikProps} onSubmit={handleSubmit}>
-      {(formik) => <AntdForm {...formProps}>{children(formik)}</AntdForm>}
-    </FormFormik>;
+    return (
+      <FormFormik<TValue> {...formikProps} onSubmit={handleSubmit}>
+        {(formik) => <AntdForm {...formProps}>{children(formik)}</AntdForm>}
+      </FormFormik>
+    );
   }
 
   return (

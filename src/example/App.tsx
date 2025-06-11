@@ -3,12 +3,13 @@ import * as Yup from 'yup';
 import { useFormikContext } from 'formik';
 import { Form } from './../src';
 import type { DefaultOptionType } from 'antd/es/select';
-import type { CheckboxOptionType } from 'antd';
+import { Typography, type CheckboxOptionType } from 'antd';
 import { useUsersOptionSource } from './useUserOptionSource';
 import { useTranslation } from './useTranslation';
 import './App.css';
 
 import { FormAsyncSelect } from './../src/add/async-select/FormAsyncSelect';
+import { FormObjectErrorDemo } from './FormObjectErrorDemo';
 
 Form.settings.useTranslation = useTranslation;
 
@@ -112,13 +113,21 @@ export function App() {
           <Form.DatePicker />
         </Form.Item>
         <Form.Item name="dateTimePicker">
-          <Form.DatePicker format={'DD/MM/YYYY HH:mm'} showTime />
+          <Form.DatePicker format={'DD/MM/YYYY HH:mm'} />
         </Form.Item>
         <Form.Item name="textArea">
-          <Form.TextArea />
+          <Form.TextArea name="textArea" />
         </Form.Item>
         <Track />
       </Form>
+
+      <Typography.Title level={3}>Form function body example</Typography.Title>
+      <Form type="formik" uid="form-values-example" initialValues={{ value: '123' }} onSubmit={() => {}}>
+        {({ values, errors }) => <pre>{JSON.stringify({ values, errors }, undefined, 4)}</pre>}
+      </Form>
+
+      <Typography.Title level={3}>Form Object error</Typography.Title>
+      <FormObjectErrorDemo />
     </>
   );
 }

@@ -3,6 +3,13 @@ import { FormSettings } from '../src';
 function translate(key: string, value: any) {
   let result = '';
 
+  if (key === 'errors.inner') {
+    if (value?.count) {
+      return `There are ${value.count} errors in the ${value.label}.`;
+    }
+    return 'There are errors in the form.';
+  }
+
   for (const char of key) {
     if (result.length === 0) {
       result += char.toUpperCase();
