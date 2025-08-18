@@ -10,6 +10,17 @@ import './App.css';
 
 import { FormAsyncSelect } from './../src/add/async-select/FormAsyncSelect';
 import { FormObjectErrorDemo } from './FormObjectErrorDemo';
+import { FormInvalidSubmitExample } from './FormInvalidSubmitExample';
+import { FormAutoSubmitExample } from './FormAutoSubmitExample';
+
+const error = console.error;
+console.error = (...args) => {
+  if (args[0].startsWith('Warning:')) {
+    console.warn(...args);
+  } else {
+    error(...args);
+  }
+};
 
 Form.settings.useTranslation = useTranslation;
 
@@ -33,6 +44,7 @@ function Track() {
 
 const INITIAL_VALUE = {
   firstName: '',
+  password: null!,
   number: 0,
   select: 0,
   asyncSelect: null,
@@ -62,7 +74,7 @@ function Watch() {
   const value = Form.useWatch('form', 'firstName');
   return (
     <div>
-      <div>Watch:</div>
+      <Typography.Text>Watch:</Typography.Text>
       <div>{value}</div>
     </div>
   );
@@ -88,6 +100,9 @@ export function App() {
         <Form.Item name="firstName">
           <Form.Text />
         </Form.Item>
+        <Form.Item name="password">
+          <Form.Password />
+        </Form.Item>
         <Form.Item name="number">
           <Form.InputNumber />
         </Form.Item>
@@ -97,8 +112,10 @@ export function App() {
         <Form.Item name="asyncSelect">
           <FormAsyncSelect optionSource={userSource} allowClear />
         </Form.Item>
-        <Form.Item name="checkbox" className="--checkbox" required>
-          <Form.Checkbox />
+        <Form.Item name="checkbox" label={false} required>
+          <Form.Checkbox>
+            <Form.LabelValue />
+          </Form.Checkbox>
         </Form.Item>
         <Form.Item name="checkboxGroup" required>
           <Form.CheckboxGroup options={CHECKBOX_OPTIONS} />
@@ -128,6 +145,9 @@ export function App() {
 
       <Typography.Title level={3}>Form Object error</Typography.Title>
       <FormObjectErrorDemo />
+
+      <FormInvalidSubmitExample />
+      <FormAutoSubmitExample />
     </>
   );
 }

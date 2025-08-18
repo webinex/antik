@@ -19,6 +19,10 @@ export type { FormSubmitProps } from './FormSubmit';
 export type { FormSwitchProps } from './FormSwitch';
 export type { FormTextProps } from './FormText';
 export type { FormTextAreaProps } from './FormTextArea';
+export type { FormAutoSubmitProps } from './FormAutoSubmit';
+export type { FormPasswordProps } from './FormPassword';
+export type { FormStateProps } from './FormState';
+export type { FormLabelValueProps } from './FormLabelValue';
 export type { Option } from './Option';
 export {
   type OptionSource,

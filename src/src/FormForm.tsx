@@ -5,6 +5,7 @@ import { FormFormik, FormFormikProps } from './FormFormik';
 import { FormikHelpers, FormikValues } from 'formik';
 import { fc } from './fc';
 import { useCallback } from 'react';
+import { useFormInvalidSubmitEffect, UseFormInvalidSubmitEffectArgs } from './useFormInvalidSubmitEffect';
 
 export type FormBaseProps = Omit<AntdFormProps, keyof RcFormProps | 'disabled'>;
 
@@ -33,6 +34,7 @@ export interface FormOnlyProps extends FormBaseProps {
 
 export interface FormWithFormikProps<TValue = any> extends FormBaseProps, FormFormikProps<TValue> {
   type: 'formik';
+  onInvalidSubmit?: () => void;
 }
 
 function isFormWithFormikProps<TValue>(props: FormProps<TValue>): props is FormWithFormikProps<TValue> {
@@ -87,12 +89,18 @@ function isYupSchema(x: any): x is { validate: (value: any) => Promise<any> } {
   return x && typeof x === 'object' && x.__isYupSchema__ === true;
 }
 
+function FormInvalidSubmit(props: UseFormInvalidSubmitEffectArgs) {
+  useFormInvalidSubmitEffect(props);
+  return null;
+}
+
 export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<TValue>) => {
   if (!isFormWithFormikProps(props)) {
     return <AntdForm {...props} />;
   }
 
-  const [formikProps, formProps, children] = splitProps(props);
+  const { onInvalidSubmit, ...formikAndFormProps } = props;
+  const [formikProps, formProps, children] = splitProps(formikAndFormProps);
 
   const { onSubmit, validationSchema } = formikProps;
 
@@ -113,7 +121,12 @@ export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<
   if (typeof children === 'function') {
     return (
       <FormFormik<TValue> {...formikProps} onSubmit={handleSubmit}>
-        {(formik) => <AntdForm {...formProps}>{children(formik)}</AntdForm>}
+        {(formik) => (
+          <>
+            <AntdForm {...formProps}>{children(formik)}</AntdForm>
+            {onInvalidSubmit && <FormInvalidSubmit onInvalidSubmit={onInvalidSubmit} />}
+          </>
+        )}
       </FormFormik>
     );
   }
@@ -121,6 +134,7 @@ export const FormForm = fc(<TValue extends FormikValues = any>(props: FormProps<
   return (
     <FormFormik<TValue> {...formikProps} onSubmit={handleSubmit}>
       <AntdForm {...formProps}>{children as JSX.Element}</AntdForm>
+      {onInvalidSubmit && <FormInvalidSubmit onInvalidSubmit={onInvalidSubmit} />}
     </FormFormik>
   );
 });
