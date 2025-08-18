@@ -22,10 +22,16 @@ import { useFormItemName } from './useFormItemName';
 import { Settings, FormSettings } from './FormSettings';
 import { useFormValidate } from './useFormValidate';
 import { FormTimePicker } from './FormTimePicker';
+import { FormAutoSubmit } from './FormAutoSubmit';
+import { FormPassword } from './FormPassword';
+import { FormState } from './FormState';
+import { FormLabelValue } from './FormLabelValue';
+import { useFormNamespace } from './FormNamespace';
 
 const BUILT_IN = {
   Item: FormItem,
   Input: FormInput,
+  Password: FormPassword,
   TextArea: FormTextArea,
   Text: FormText,
   Formik: FormFormik,
@@ -40,6 +46,9 @@ const BUILT_IN = {
   ErrorMessage: FormErrorMessage,
   Switch: FormSwitch,
   CheckboxGroup: FormCheckboxGroup,
+  AutoSubmit: FormAutoSubmit,
+  State: FormState,
+  LabelValue: FormLabelValue,
   useWatch: useFormWatch,
   useRef: useFormRef,
   useSubmit: useFormSubmit,
@@ -47,15 +56,15 @@ const BUILT_IN = {
   useDisabled: useFormFieldDisabled,
   useName: useFormItemName,
   useValidate: useFormValidate,
+  useNamespace: useFormNamespace,
 };
 
 export interface FormExtensions {}
 
 export type FormType = typeof FormForm;
 
-export const Form: FormType & typeof BUILT_IN & FormExtensions & { settings: FormSettings } = Object.assign(
-  FormForm,
-  BUILT_IN,
-  {} as FormExtensions,
-  { settings: Settings },
-);
+export const Form: FormType &
+  Omit<typeof BUILT_IN, keyof FormExtensions> &
+  FormExtensions & { settings: FormSettings } = Object.assign(FormForm, BUILT_IN, {} as FormExtensions, {
+  settings: Settings,
+});

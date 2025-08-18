@@ -8,11 +8,9 @@ export interface OptionSource<TOption extends Option = Option> {
 }
 
 type EntireLoadFn<TOption extends Option = Option> = () => Promise<TOption[]>;
-interface EntireLoadOptions<TOption extends Option = Option> {
+interface EntireLoadOptions<TOption extends Option = Option>
+  extends Pick<OptionSource<TOption>, 'labelBy' | 'searchBy' | 'valueBy'> {
   fn: EntireLoadFn<TOption>;
-  searchBy?: Extract<keyof TOption, string> | string;
-  valueBy?: Extract<keyof TOption, string> | string;
-  labelBy?: Extract<keyof TOption, string> | string;
 }
 
 const EMPTY_ARRAY: readonly Option[] = Object.freeze([] as Option[]);

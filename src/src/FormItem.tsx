@@ -42,6 +42,7 @@ const _FormItem: FC<FormItemInternalProps> = memo((props) => {
     help: helpProp,
     validateStatus: validateStatusProp,
     noErrorMessage = false,
+    nameAbsolute,
     ...rest
   } = props;
 

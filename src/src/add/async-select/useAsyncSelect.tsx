@@ -248,7 +248,7 @@ export function useAsyncSelect<OptionType extends Option>(
       onSearch,
       searchValue,
       filterOption: false,
-      fieldNames: { label: labelBy, value: valueBy },
+      fieldNames: labelBy || valueBy ? { label: labelBy, value: valueBy } : undefined,
     }),
     [isFetching, onDropdownVisibleChange, options, onSearch, searchValue, labelBy, valueBy],
   );

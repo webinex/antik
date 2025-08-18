@@ -11,7 +11,7 @@ import copy from 'rollup-plugin-copy';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import packageJson from './package.json' assert { type: 'json' };
+import packageJson from './package.json' with { type: 'json' };
 
 const adds = fs.readdirSync('./src/add');
 
