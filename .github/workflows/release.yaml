@@ -1,4 +1,4 @@
-name: CI
+name: Release
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Build and Publish (version branch only)
+    name: Build and Publish
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,6 @@ jobs:
         working-directory: ./src
 
       - name: Publish NPM Package
-        if: github.ref == 'refs/heads/v5'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ./.npmrc
           PACKAGE_NAME=$(node -p "require('./package.json').name")
