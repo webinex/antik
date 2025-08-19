@@ -57,15 +57,22 @@ function useValue<ValueType, OptionType extends BaseOptionType>(
   name: string,
   valueType: FormSelectProps['valueType'] = 'value',
 ) {
-  const { mapGet, fieldNames } = props;
+  const { mapGet, fieldNames, mode } = props;
   const { value: valueField = 'value' } = fieldNames ?? {};
   const field = useField(name);
   const value = mapGet!(field);
 
-  return useMemo(
-    () => (valueType === 'value' ? value : value ? value[valueField] : value),
-    [value, valueField, valueType],
-  );
+  return useMemo(() => {
+    function mapOne(value: OptionType) {
+      if (valueType === 'value') {
+        return value;
+      }
+
+      return value?.[valueField] ?? null;
+    }
+
+    return mode === 'multiple' || mode === 'tags' ? value.map(mapOne) : mapOne(value);
+  }, [value, valueField, valueType, mode]);
 }
 
 const _FormSelect = fc(function <
