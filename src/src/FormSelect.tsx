@@ -52,6 +52,8 @@ function useMapValue<ValueType, OptionType extends BaseOptionType>(
   );
 }
 
+const EMPTY_ARRAY: readonly unknown[] = Object.freeze([]);
+
 function useValue<ValueType, OptionType extends BaseOptionType>(
   props: FormSelectProps<ValueType, OptionType>,
   name: string,
@@ -71,7 +73,7 @@ function useValue<ValueType, OptionType extends BaseOptionType>(
       return value?.[valueField] ?? null;
     }
 
-    return mode === 'multiple' || mode === 'tags' ? value.map(mapOne) : mapOne(value);
+    return mode === 'multiple' || mode === 'tags' ? (value?.map(mapOne) ?? EMPTY_ARRAY) : mapOne(value);
   }, [value, valueField, valueType, mode]);
 }
 
@@ -80,7 +82,7 @@ const _FormSelect = fc(function <
   OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
 >(props: FormSelectProps<ValueType, OptionType>) {
   props = Object.assign({}, FormSelect.DEFAULT_PROPS, props);
-  const { name: nameProp, valueType, onDeselect: onDeselectProp, onSelect: onSelectProp, ...rest } = props;
+  const { name: nameProp, valueType, ...rest } = props;
   const name = useFormItemName(nameProp);
 
   const value = useValue(props, name, valueType);
