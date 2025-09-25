@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Option, OptionSource } from '@webinex/antik';
 import type { SelectProps } from 'antd';
-import { OptionSourceUtil } from '@webinex/antik';
-
-export const ASYNC_SELECT_EXTENDED_VALUE_FIELD = '__extend__value';
-export const ASYNC_SELECT_EXTENDED_LABEL_FIELD = '__extend__label';
 
 interface AsyncSelectOptionsState<OptionType extends Option> {
   data: OptionType[] | undefined;
@@ -144,44 +140,6 @@ function useQueryOptions<OptionType extends Option>(
   }, [fetch, searchValue, preload]);
 }
 
-export function extendWithValueByAndLabelBy<OptionType extends Option>(
-  options: OptionType[],
-  getters: Pick<OptionSource<OptionType>, 'labelBy' | 'valueBy'>,
-) {
-  const { valueBy, labelBy } = getters;
-  const labelByFn = typeof labelBy === 'function' ? labelBy : null;
-  const valueFn = typeof valueBy === 'function' ? valueBy : null;
-
-  if (!labelByFn && !valueFn) {
-    return options;
-  }
-
-  return options.map((option) => {
-    const extension: Record<string, any> = {};
-    if (labelByFn) extension[ASYNC_SELECT_EXTENDED_LABEL_FIELD] = labelByFn(option);
-    if (valueFn) extension[ASYNC_SELECT_EXTENDED_VALUE_FIELD] = valueFn(option);
-
-    return {
-      ...option,
-      ...extension,
-    };
-  });
-}
-
-export function omitExtendedValueByAndLabelBy<OptionType extends Option>(option: OptionType) {
-  if (ASYNC_SELECT_EXTENDED_LABEL_FIELD in option) {
-    const { [ASYNC_SELECT_EXTENDED_LABEL_FIELD]: _, ...rest } = option as any;
-    option = rest;
-  }
-
-  if (ASYNC_SELECT_EXTENDED_VALUE_FIELD in option) {
-    const { [ASYNC_SELECT_EXTENDED_VALUE_FIELD]: _, ...rest } = option as any;
-    option = rest;
-  }
-
-  return option;
-}
-
 function useOptions<OptionType extends Option>(
   args: UseAsyncSelectArgs<OptionType>,
   [state]: UseAsyncSelectState<OptionType>,
@@ -190,33 +148,28 @@ function useOptions<OptionType extends Option>(
   const { data } = options;
   const {
     always,
-    optionSource: { valueBy, labelBy },
+    optionSource: { valueBy },
   } = args;
 
   return useMemo<OptionType[]>(() => {
-    function unshiftAlwaysOptions(options: OptionType[]) {
-      if (!always) {
-        return options;
-      }
+    const alwaysOptions = Array.isArray(always) ? always : always !== undefined ? [always] : [];
+    let options: OptionType[] = [...(data ?? [])];
 
-      const alwaysOptions = Array.isArray(always) ? always : [always];
-      const valueFn = OptionSourceUtil.valueByFn(valueBy);
-      alwaysOptions.forEach((option) => {
-        if (!options.some((x) => valueFn(x) === valueFn(option))) {
-          options.unshift(option);
-        }
-      });
+    if (alwaysOptions.length === 0) {
       return options;
     }
 
-    let options: OptionType[] = [...(data ?? [])];
-    options = unshiftAlwaysOptions(options);
-    options = extendWithValueByAndLabelBy(options, { valueBy, labelBy });
+    alwaysOptions.forEach((option) => {
+      if (!options.some((x) => x[valueBy!] === option[valueBy!])) {
+        options.unshift(option);
+      }
+    });
+
     return options;
-  }, [always, valueBy, labelBy, data]);
+  }, [always, valueBy, data]);
 }
 
-function useDropdownVisibleChange<OptionType extends Option>(
+function useOnDropdownVisibleChange<OptionType extends Option>(
   args: UseAsyncSelectArgs<OptionType>,
   reducer: UseAsyncSelectState<OptionType>,
 ) {
@@ -250,7 +203,7 @@ export interface UseAsyncSelectArgs<OptionType extends Option> {
   always?: OptionType[];
 }
 
-function useSearch<OptionType extends Option>(reducer: UseAsyncSelectState<OptionType>) {
+function useOnSearch<OptionType extends Option>(reducer: UseAsyncSelectState<OptionType>) {
   const [, setState] = reducer;
   return useCallback((value: string) => setState((prev) => ({ ...prev, searchValue: value })), [setState]);
 }
@@ -267,31 +220,6 @@ function useArgs<OptionType extends Option>(
   );
 }
 
-function useFieldNames(args: UseAsyncSelectArgs<any>) {
-  const {
-    optionSource: { valueBy, labelBy },
-  } = args;
-  return useMemo((): SelectProps['fieldNames'] => {
-    const labelProp =
-      typeof labelBy === 'string'
-        ? labelBy
-        : typeof labelBy === 'function'
-          ? ASYNC_SELECT_EXTENDED_LABEL_FIELD
-          : undefined;
-
-    const valueProp =
-      typeof valueBy === 'string'
-        ? valueBy
-        : typeof valueBy === 'function'
-          ? ASYNC_SELECT_EXTENDED_VALUE_FIELD
-          : undefined;
-
-    if (!labelProp && !valueProp) return undefined;
-
-    return { label: labelProp, value: valueProp };
-  }, [valueBy, labelBy]);
-}
-
 export function useAsyncSelect<OptionType extends Option>(
   args: UseAsyncSelectArgs<OptionType>,
 ): UseAsyncSelectResult<OptionType> {
@@ -306,9 +234,11 @@ export function useAsyncSelect<OptionType extends Option>(
 
   const options = useOptions<OptionType>(args, reducer);
   useQueryOptions<OptionType>(args, reducer);
-  const onDropdownVisibleChange = useDropdownVisibleChange(args, reducer);
-  const onSearch = useSearch(reducer);
-  const fieldNames = useFieldNames(args);
+  const onDropdownVisibleChange = useOnDropdownVisibleChange(args, reducer);
+  const onSearch = useOnSearch(reducer);
+  const {
+    optionSource: { labelBy, valueBy },
+  } = args;
 
   const props = useMemo<UseAsyncSelectResult<OptionType>[0]>(
     () => ({
@@ -318,9 +248,9 @@ export function useAsyncSelect<OptionType extends Option>(
       onSearch,
       searchValue,
       filterOption: false,
-      fieldNames: fieldNames,
+      fieldNames: labelBy || valueBy ? { label: labelBy, value: valueBy } : undefined,
     }),
-    [isFetching, onDropdownVisibleChange, options, onSearch, searchValue, fieldNames],
+    [isFetching, onDropdownVisibleChange, options, onSearch, searchValue, labelBy, valueBy],
   );
 
   return useMemo(() => [props, reducer], [props, reducer]);

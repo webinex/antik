@@ -12,7 +12,6 @@ import { FormAsyncSelect } from './../src/add/async-select/FormAsyncSelect';
 import { FormObjectErrorDemo } from './FormObjectErrorDemo';
 import { FormInvalidSubmitExample } from './FormInvalidSubmitExample';
 import { FormAutoSubmitExample } from './FormAutoSubmitExample';
-import { FormAsyncSelectWithLabelByExample } from './FormAsyncSelectWithLabelByExample';
 
 const error = console.error;
 console.error = (...args) => {
@@ -149,7 +148,6 @@ export function App() {
 
       <FormInvalidSubmitExample />
       <FormAutoSubmitExample />
-      <FormAsyncSelectWithLabelByExample />
     </>
   );
 }

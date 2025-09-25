@@ -57,8 +57,9 @@ const EMPTY_ARRAY: readonly unknown[] = Object.freeze([]);
 function useValue<ValueType, OptionType extends BaseOptionType>(
   props: FormSelectProps<ValueType, OptionType>,
   name: string,
+  valueType: FormSelectProps['valueType'] = 'value',
 ) {
-  const { mapGet, fieldNames, mode, valueType = 'value' } = props;
+  const { mapGet, fieldNames, mode } = props;
   const { value: valueField = 'value' } = fieldNames ?? {};
   const field = useField(name);
   const value = mapGet!(field);
@@ -84,7 +85,7 @@ const _FormSelect = fc(function <
   const { name: nameProp, valueType, ...rest } = props;
   const name = useFormItemName(nameProp);
 
-  const value = useValue(props, name);
+  const value = useValue(props, name, valueType);
   const disabled = useFormFieldDisabled(props);
   const mapValue = useMapValue(props);
   const onChange = useFormFieldOnChange(name, mapValue);
