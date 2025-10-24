@@ -10,7 +10,7 @@ import { FormTextArea } from './FormTextArea';
 import { FormDatePicker } from './FormDatePicker';
 import { FormInputNumber } from './FormInputNumber';
 import { FormRadioGroup } from './FormRadioGroup';
-import { FormErrorMessage } from './FormErrorMessage';
+import { FormErrorMessage, useFormErrorMessage } from './FormErrorMessage';
 import { FormSwitch } from './FormSwitch';
 import { FormCheckboxGroup } from './FormCheckboxGroup';
 import { FormText } from './FormText';
@@ -57,6 +57,7 @@ const BUILT_IN = {
   useName: useFormItemName,
   useValidate: useFormValidate,
   useNamespace: useFormNamespace,
+  useErrorMessage: useFormErrorMessage,
 };
 
 export interface FormExtensions {}
