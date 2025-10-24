@@ -5,10 +5,24 @@ import { Settings } from './FormSettings';
 export interface UseFormErrorMessageArgs {
   name: string;
   label?: React.ReactNode;
+  className?: string;
   mode?: 'touched' | 'always';
+  style?: React.CSSProperties;
 }
 
-export type FormErrorMessageProps = UseFormErrorMessageArgs;
+export interface FormErrorMessageRenderArgs {
+  error: string;
+}
+
+export type FormErrorMessageProps = UseFormErrorMessageArgs & {
+  /**
+   * Allows custom rendering of the error message.
+   *
+   * @param args error message render arguments
+   * @returns content to be displayed
+   */
+  render?: (args: FormErrorMessageRenderArgs) => React.ReactNode;
+};
 
 function isKeyError(x: any): x is { key: string } {
   return typeof x === 'object' && x.hasOwnProperty('key') && x['key'] != null;
@@ -90,21 +104,32 @@ export function useFormErrorMessage(args: UseFormErrorMessageArgs) {
   return useMemo(() => ({ show, error }), [show, error]);
 }
 
-const _FormErrorMessage: FC<ReturnType<typeof useFormErrorMessage>> = memo((props) => {
-  const { error, show } = props;
+const _FormErrorMessage: FC<
+  ReturnType<typeof useFormErrorMessage> & Pick<FormErrorMessageProps, 'render' | 'className' | 'style'>
+> = memo((props) => {
+  const { error, show, render, className, style } = props;
 
   if (!show) {
     return null;
   }
 
-  return <span>{error}</span>;
+  if (render) {
+    return render({ error });
+  }
+
+  return (
+    <span className={className} style={style}>
+      {error}
+    </span>
+  );
 });
 
 _FormErrorMessage.displayName = 'Form.ErrorMessage';
 
 export const FormErrorMessage: FC<FormErrorMessageProps> = (props) => {
+  const { render, className, style } = props;
   const errors = useFormErrorMessage(props);
-  return <_FormErrorMessage {...errors} />;
+  return <_FormErrorMessage {...errors} render={render} className={className} style={style} />;
 };
 
-FormErrorMessage.displayName = 'Form.ErrorMessage';
+FormErrorMessage.displayName = _FormErrorMessage.displayName;

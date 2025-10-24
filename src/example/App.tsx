@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { useFormikContext } from 'formik';
 import { Form } from './../src';
 import type { DefaultOptionType } from 'antd/es/select';
-import { Typography, type CheckboxOptionType } from 'antd';
+import { Alert, Typography, type CheckboxOptionType } from 'antd';
 import { useUsersOptionSource } from './useUserOptionSource';
 import { useTranslation } from './useTranslation';
 import './App.css';
@@ -35,11 +35,12 @@ Form.defaultProps = {
 const SCHEMA = Yup.object({
   checkbox: Yup.bool().required(),
   firstName: Yup.string().nullable().required(),
+  customFormError: Yup.bool().notOneOf([true], 'This is a custom form error').required(),
 });
 
-function Track() {
+function Track(props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLPreElement>, HTMLPreElement>) {
   const { values, errors, touched } = useFormikContext();
-  return <pre>{JSON.stringify({ values, errors, touched }, undefined, 2)}</pre>;
+  return <pre {...props}>{JSON.stringify({ values, errors, touched }, undefined, 2)}</pre>;
 }
 
 const INITIAL_VALUE = {
@@ -56,6 +57,7 @@ const INITIAL_VALUE = {
   switch: null,
   datePicker: null,
   dateTimePicker: null,
+  customFormError: false,
 };
 
 function onSubmit() {}
@@ -135,7 +137,22 @@ export function App() {
         <Form.Item name="textArea">
           <Form.TextArea name="textArea" />
         </Form.Item>
-        <Track />
+        <Typography.Title level={3}>Custom form error</Typography.Title>
+        <div>
+          <Form.RadioGroup
+            options={[
+              { value: false, label: 'Valid' },
+              { value: true, label: 'Invalid' },
+            ]}
+            name="customFormError"
+          />
+        </div>
+        <Form.ErrorMessage
+          name="customFormError"
+          mode="always"
+          render={({ error }) => <Alert type="error" message={error} style={{ marginTop: 16 }} />}
+        />
+        <Track style={{ marginTop: 16 }} />
       </Form>
 
       <Typography.Title level={3}>Form function body example</Typography.Title>
