@@ -34,4 +34,4 @@ export {
 } from './OptionSource';
 export { type UseFormLabelArgs } from './useFormLabel';
 export { type FormSettings } from './FormSettings';
-export { type TypeConfiguration } from './configuration';
+export { type TypeConfiguration, type TypeConfigurationOverride } from './configuration';
