@@ -36,7 +36,7 @@ const config = [
       peerDepsExternal(),
       resolve(),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json', exclude: ['src/add/**'] }),
+      typescript({ tsconfig: './tsconfig.lib.json', exclude: ['src/add/**'] }),
       postcss(),
       terser(),
       image(),
@@ -83,7 +83,7 @@ function getAddConfig(add) {
         resolve(),
         commonjs(),
         typescript({
-          tsconfig: './tsconfig.json',
+          tsconfig: './tsconfig.lib.json',
           include: ['src/add/' + add + '/**'],
           paths: {
             '@webinex/antik': ['dist'],

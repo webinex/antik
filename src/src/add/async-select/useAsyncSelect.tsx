@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { Option, OptionSource } from '@webinex/antik';
+import type { Option, OptionSource, __OptionSourceInternalTypes } from '@webinex/antik';
 import type { SelectProps } from 'antd';
 import { OptionSourceUtil } from '@webinex/antik';
 
@@ -149,8 +149,10 @@ export function extendWithValueByAndLabelBy<OptionType extends Option>(
   getters: Pick<OptionSource<OptionType>, 'labelBy' | 'valueBy'>,
 ) {
   const { valueBy, labelBy } = getters;
-  const labelByFn = typeof labelBy === 'function' ? labelBy : null;
-  const valueFn = typeof valueBy === 'function' ? valueBy : null;
+  const labelByFn =
+    typeof labelBy === 'function' ? (labelBy as __OptionSourceInternalTypes<OptionType>['LabelBy']) : null;
+  const valueFn =
+    typeof valueBy === 'function' ? (valueBy as __OptionSourceInternalTypes<OptionType>['ValueBy']) : null;
 
   if (!labelByFn && !valueFn) {
     return options;

@@ -2,7 +2,7 @@
   "name": "@webinex/antik",
   "description": "Webinex Wispo",
   "private": false,
-  "version": "1.3.6",
+  "version": "1.3.6-build0",
   "author": "Webinex Dev",
   "license": "Apache-2.0",
   "main": "dist/cjs/index.js",
@@ -60,5 +60,8 @@
     "react-dom": ">=16",
     "yup": ">=1"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "alias": {
+    "@webinex/antik": "./src/index.ts"
+  }
 }

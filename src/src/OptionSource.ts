@@ -1,26 +1,40 @@
+import { TypeConfiguration } from './configuration';
 import { Option } from './Option';
+
+type LabelByFn<TOption extends Option = Option> = (option: TOption) => React.ReactNode;
+type ValueByFn<TOption extends Option = Option> = (option: TOption) => string | number;
+type SearchByFn<TOption extends Option = Option> = (option: TOption) => string;
+
+/**
+ * @deprecated Only for internal usage
+ */
+export interface __OptionSourceInternalTypes<TOption extends Option = Option> {
+  LabelBy: LabelByFn<TOption>;
+  ValueBy: ValueByFn<TOption>;
+  SearchBy: SearchByFn<TOption>;
+}
 
 export interface OptionSource<TOption extends Option = Option> {
   /**
    * Defines how to extract the search string from an option.
-   *
-   * **EXPERIMENTAL: The functional `searchBy` is experimental and may change in future releases.**
    */
-  searchBy?: Extract<keyof TOption, string> | string | ((option: TOption) => string);
+  searchBy?: TypeConfiguration['experimentalOptionSource'] extends true
+    ? Extract<keyof TOption, string> | string | SearchByFn<TOption>
+    : Extract<keyof TOption, string> | string;
 
   /**
    * Defines how to extract the value from an option.
-   *
-   * **EXPERIMENTAL: The functional `valueBy` is experimental and may change in future releases.**
    */
-  valueBy?: Extract<keyof TOption, string> | string | ((option: TOption) => string | number);
+  valueBy?: TypeConfiguration['experimentalOptionSource'] extends true
+    ? Extract<keyof TOption, string> | string | ValueByFn<TOption>
+    : Extract<keyof TOption, string> | string;
 
   /**
    * Defines how to extract the label from an option.
-   *
-   * **EXPERIMENTAL: The functional `labelBy` is experimental and may change in future releases.**
    */
-  labelBy?: Extract<keyof TOption, string> | string | ((option: TOption) => React.ReactNode);
+  labelBy?: TypeConfiguration['experimentalOptionSource'] extends true
+    ? Extract<keyof TOption, string> | string | LabelByFn<TOption>
+    : Extract<keyof TOption, string> | string;
 
   /**
    * Searches for options matching the given search string.
@@ -121,7 +135,7 @@ export const OptionSourceUtil = {
   searchByFn: <TOption extends Option>(searchBy: OptionSource<TOption>['searchBy']) => {
     return (option: TOption) => {
       if (typeof searchBy === 'function') {
-        return searchBy(option);
+        return (searchBy as SearchByFn<TOption>)(option);
       } else if (typeof searchBy === 'string') {
         return option[searchBy] as string;
       } else if (typeof option['label'] === 'string') {
@@ -147,7 +161,7 @@ export const OptionSourceUtil = {
   labelByFn: <TOption extends Option>(labelBy: OptionSource<TOption>['labelBy']) => {
     return (option: TOption) => {
       if (typeof labelBy === 'function') {
-        return labelBy(option);
+        return (labelBy as LabelByFn<TOption>)(option);
       } else if (typeof labelBy === 'string') {
         return option[labelBy] as React.ReactNode;
       } else {
@@ -163,7 +177,7 @@ export const OptionSourceUtil = {
   valueByFn: <TOption extends Option>(valueBy: OptionSource<TOption>['valueBy']) => {
     return (option: TOption) => {
       if (typeof valueBy === 'function') {
-        return valueBy(option);
+        return (valueBy as ValueByFn<TOption>)(option);
       } else if (typeof valueBy === 'string') {
         return option[valueBy] as string | number;
       } else {
