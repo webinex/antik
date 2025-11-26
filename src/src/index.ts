@@ -29,6 +29,9 @@ export {
   EMPTY_OPTION_SOURCE,
   emptyOptionSource,
   createEntireLoadOptionSource,
+  OptionSourceUtil,
+  type __OptionSourceInternalTypes,
 } from './OptionSource';
 export { type UseFormLabelArgs } from './useFormLabel';
 export { type FormSettings } from './FormSettings';
+export { type TypeConfiguration } from './configuration';
