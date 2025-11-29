@@ -3,8 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
 declare module '@webinex/antik' {
-  interface TypeConfiguration {
-    // @ts-expect-error
+  interface TypeConfigurationOverride {
     experimentalOptionSource: true;
   }
 }
