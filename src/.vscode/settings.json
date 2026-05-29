@@ -4,5 +4,7 @@
   "editor.insertSpaces": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.rulers": [110]
+  "editor.rulers": [110],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
 }
