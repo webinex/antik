@@ -1,0 +1,121 @@
+import { useField } from 'formik';
+import { Select, SelectProps } from 'antd';
+import { memo, type ReactElement, useCallback, useMemo } from 'react';
+import type { BaseOptionType, DefaultOptionType } from 'antd/es/select';
+import { useFormFieldDisabled } from './useFormFieldDisabled';
+import { useFormItemName } from './useFormItemName';
+import { fc } from './fc';
+import { useFormFieldOnChange } from './useFormFieldOnChange';
+import { useFormFieldOnBlur } from './useFormFieldOnBlur';
+
+export type FormSelectProps<
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+> = {
+  name?: string;
+  valueType?: 'option' | 'value';
+  mapSet?: (value: ValueType | OptionType | OptionType[] | null) => any;
+  mapGet?: (field: ReturnType<typeof useField<any>>) => NonNullable<SelectProps['value']>;
+} & SelectProps<ValueType, OptionType>;
+
+type FormSelectInternalProps<
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+> = FormSelectProps<ValueType, OptionType> &
+  Required<Pick<FormSelectProps<ValueType, OptionType>, 'onChange' | 'onBlur'>>;
+
+let _FormSelectMemo = fc(function <
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+>(props: FormSelectInternalProps<ValueType, OptionType>) {
+  const { name, ...rest } = props;
+  return <Select {...rest} />;
+});
+
+_FormSelectMemo.displayName = 'Form.Select';
+_FormSelectMemo = memo(_FormSelectMemo) as any;
+
+function useMapValue<ValueType, OptionType extends BaseOptionType>(
+  props: FormSelectProps<ValueType, OptionType>,
+) {
+  const { valueType = 'value', mapSet } = props;
+
+  return useCallback(
+    (value: ValueType, option: OptionType | OptionType[] | undefined) => {
+      if (valueType === 'value') {
+        return mapSet!(value ?? null);
+      }
+
+      return mapSet!(option ?? null);
+    },
+    [valueType, mapSet],
+  );
+}
+
+const EMPTY_ARRAY: readonly unknown[] = Object.freeze([]);
+
+function useValue<ValueType, OptionType extends BaseOptionType>(
+  props: FormSelectProps<ValueType, OptionType>,
+  name: string,
+) {
+  const { mapGet, fieldNames, mode, valueType = 'value' } = props;
+  const { value: valueField = 'value' } = fieldNames ?? {};
+  const field = useField(name);
+  const value = mapGet!(field);
+
+  return useMemo(() => {
+    function mapOne(value: OptionType) {
+      if (valueType === 'value') {
+        return value;
+      }
+
+      return value?.[valueField] ?? null;
+    }
+
+    return mode === 'multiple' || mode === 'tags' ? (value?.map(mapOne) ?? EMPTY_ARRAY) : mapOne(value);
+  }, [value, valueField, valueType, mode]);
+}
+
+const FormSelectComponent = memo(<
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+>(props: FormSelectProps<ValueType, OptionType>) => {
+  props = Object.assign({}, FormSelect.defaults, props);
+  const { name: nameProp, valueType, ...rest } = props;
+  const name = useFormItemName(nameProp);
+
+  const value = useValue(props, name);
+  const disabled = useFormFieldDisabled(props);
+  const mapValue = useMapValue(props);
+  const onChange = useFormFieldOnChange(name, mapValue);
+  const onBlur = useFormFieldOnBlur(name);
+
+  return (
+    <_FormSelectMemo<ValueType, OptionType>
+      {...rest}
+      name={name}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      disabled={disabled}
+    />
+  );
+}) as (<
+  ValueType = any,
+  OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType,
+>(
+  props: FormSelectProps<ValueType, OptionType>,
+) => ReactElement | null) & {
+  displayName?: string;
+};
+
+FormSelectComponent.displayName = 'Form.Select';
+
+const DEFAULTS: FormSelectProps<any> = {
+  mapGet: ([{ value }]) => value,
+  mapSet: (value) => value,
+};
+
+export const FormSelect = /* @__PURE__ */ Object.assign(fc(FormSelectComponent), {
+  defaults: DEFAULTS,
+});
